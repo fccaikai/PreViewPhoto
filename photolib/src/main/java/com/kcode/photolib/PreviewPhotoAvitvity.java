@@ -123,7 +123,7 @@ public class PreviewPhotoAvitvity extends AppCompatActivity {
     }
 
     private boolean pathIsEmpty(ArrayList<String> path) {
-        if (mPath == null || mPath.size() == 0) {
+        if (path == null || path.size() == 0) {
             return true;
         }
 
