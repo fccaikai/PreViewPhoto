@@ -25,6 +25,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void preview(View view){
-        startActivity(PreviewPhotoAvitvity.newIntent(this, paths));
+        startActivity(PreviewPhotoAvitvity.newIntent(this, paths,2));
     }
 }

@@ -18,13 +18,42 @@ import java.util.ArrayList;
 
 public class PreviewPhotoAvitvity extends AppCompatActivity {
 
-    public static Intent newIntent(Context context, ArrayList<String> paths){
+    private final static String PTAH = "path";
+    private final static String INDEX = "index";
+
+    private final static int DEFAULT_INDEX = 1;
+
+    /**
+     * @param context Context
+     * @param paths   image url arrayList
+     * @return Intent
+     */
+    public static Intent newIntent(Context context, ArrayList<String> paths) {
+        return newIntent(context, paths, DEFAULT_INDEX);
+    }
+
+    /**
+     * @param context Context
+     * @param paths   image url arrayList
+     * @param index   Show the first few photos,starting form 0
+     * @return Intent
+     */
+    public static Intent newIntent(Context context, ArrayList<String> paths, int index) {
+        if (paths == null || paths.size() == 0) {
+            throw new NullPointerException("image url not be null");
+        }
+
+        if (index >= paths.size()) {
+            throw new RuntimeException("index must be <  paths.size()");
+        }
         Intent intent = new Intent(context, PreviewPhotoAvitvity.class);
-        intent.putStringArrayListExtra("path", paths);
+        intent.putStringArrayListExtra(PTAH, paths);
+        intent.putExtra(INDEX, index);
         return intent;
     }
 
     private final static String FORMAT = "%d/%d";
+    private int mIndex;
     private ArrayList<String> mPath;
     private ActionBar mActionBar;
 
@@ -32,7 +61,7 @@ public class PreviewPhotoAvitvity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.preview_photo_activity);
-
+        mIndex = getIntent().getIntExtra(INDEX, 0);
         mPath = getIntent().getStringArrayListExtra("path");
 
         if (pathIsEmpty(mPath)) {
@@ -43,7 +72,7 @@ public class PreviewPhotoAvitvity extends AppCompatActivity {
         initToolbar();
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(new PreviewAdapter(getApplicationContext(),mPath));
+        viewPager.setAdapter(new PreviewAdapter(getApplicationContext(), mPath));
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -60,10 +89,12 @@ public class PreviewPhotoAvitvity extends AppCompatActivity {
 
             }
         });
+        viewPager.setCurrentItem(mIndex);
+        updateTitle(mIndex+1);
 
     }
 
-    private void initToolbar(){
+    private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mActionBar = getSupportActionBar();
@@ -72,7 +103,7 @@ public class PreviewPhotoAvitvity extends AppCompatActivity {
             return;
         }
         mActionBar.setDisplayHomeAsUpEnabled(true);
-        updateTitle(1);
+
     }
 
     @Override
@@ -80,7 +111,7 @@ public class PreviewPhotoAvitvity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-               return true;
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
