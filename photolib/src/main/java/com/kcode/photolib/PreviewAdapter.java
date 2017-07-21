@@ -40,6 +40,7 @@ public class PreviewAdapter extends PagerAdapter {
 
         SketchImageView imageView = (SketchImageView) view.findViewById(R.id.sketchView);
         imageView.displayImage(mPath.get(position));
+        imageView.setZoomEnabled(true);
         container.addView(view);
         return view;
     }
